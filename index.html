@@ -324,7 +324,11 @@ async function generateReview() {
     const data = await response.json();
     
     if (data.error) {
-      throw new Error(data.error.message || 'API Error');
+      let errMsg = data.error.message || 'API Error';
+      if (errMsg.includes('quota') || errMsg.includes('Quota')) {
+        errMsg += '\n\n💡 ဖြေရှင်းနည်း:\n1. Model ကို gemini-1.5-flash ပြောင်းရွေးပါ\n2. API Key အသစ်ဖန်တီးပါ: https://aistudio.google.com/apikey\n3. 24 နာရီစောင့်ပါ';
+      }
+      throw new Error(errMsg);
     }
     
     const review = data.candidates?.[0]?.content?.parts?.[0]?.text;
